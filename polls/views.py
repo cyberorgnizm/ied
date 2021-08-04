@@ -1,10 +1,11 @@
+from django.http.response import HttpResponseRedirect
 from django.views.generic import DetailView, FormView, CreateView
 from django.db.models import Sum, Q
 from django.urls import reverse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from .models import PollingUnit, AnnouncedPUResults, LGA
-from .forms import PollForm
+from .forms import PollForm, LGAForm
 
 
 
@@ -17,6 +18,7 @@ class PollingUniteResultView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["polling_unit_results"] = AnnouncedPUResults.objects.filter(polling_unit=self.get_object().uniqueid)
+        context["lga"] = LGA.objects.first()
         return context
 
 
@@ -30,8 +32,16 @@ class LGAResultView(DetailView):
         queryset = self.model.objects.defer('date_entered')
         return queryset
 
+    def post(self, request, *args, **kwargs):
+        form = LGAForm(request.POST)
+        if form.is_valid() and form.cleaned_data["lga"]:
+            return HttpResponseRedirect(reverse("polls:lga-results", kwargs={"lga_id": form.cleaned_data["lga"].lga_id}))
+        return HttpResponseRedirect(reverse("polls:lga-results", kwargs={"lga_id": kwargs['lga_id']}))
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["unit"] = PollingUnit.objects.first()
+        context["form"] = LGAForm(self.request.POST)
         polling_units = PollingUnit.objects.filter(lga=self.get_object().lga_id).defer('date_entered')
         result = AnnouncedPUResults.objects.filter(polling_unit__in=polling_units)
         distinct_polling_results = result.distinct('party_abbreviation')

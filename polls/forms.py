@@ -1,5 +1,5 @@
 from django import forms
-from .models import Party
+from .models import Party, LGA
 
 
 class PollForm(forms.Form):
@@ -8,4 +8,10 @@ class PollForm(forms.Form):
     entered_by_user = forms.CharField(label="Entered by User", max_length=50)
     date_entered = forms.DateTimeField(label="Date Entered", widget=forms.DateTimeInput(
         attrs={"type": "date"}   
+    ))
+
+
+class LGAForm(forms.Form):
+    lga = forms.ModelChoiceField(label="Select LGA", required=False, queryset=LGA.objects.all(), widget=forms.Select(
+        attrs={"class": "form-control"}
     ))
