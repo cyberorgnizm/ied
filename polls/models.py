@@ -107,7 +107,7 @@ class PollingUnit(models.Model):
 
 class AnnouncedPUResults(models.Model):
     result_id = models.AutoField(primary_key=True)
-    polling_unit = models.CharField(max_length=50, db_column="polling_unit_uniqueid")
+    polling_unit = models.IntegerField(db_column="polling_unit_uniqueid")
     party_abbreviation = models.CharField(max_length=4)
     party_score = models.IntegerField()
     entered_by_user = models.CharField(max_length=50)
