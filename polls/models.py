@@ -70,6 +70,9 @@ class Party(models.Model):
     class Meta:
         db_table = 'party'
 
+    def __str__(self):
+        return self.partyname
+
 
 
 class Ward(models.Model):

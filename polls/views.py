@@ -1,6 +1,11 @@
-from django.views.generic import DetailView
-from django.db.models import Sum
+from django.views.generic import DetailView, FormView, CreateView
+from django.db.models import Sum, Q
+from django.urls import reverse
+from django.contrib import messages
+from django.shortcuts import get_object_or_404
 from .models import PollingUnit, AnnouncedPUResults, LGA
+from .forms import PollForm
+
 
 
 
@@ -35,3 +40,33 @@ class LGAResultView(DetailView):
             scores[polling_result.party_abbreviation] = result.filter(party_abbreviation=polling_result.party_abbreviation).aggregate(Sum('party_score'))['party_score__sum']
         context['results'] = scores
         return context
+
+
+class RecordPollResult(FormView):
+    model = AnnouncedPUResults
+    form_class = PollForm
+    template_name = "polls/new_poll.html"
+
+
+    def form_valid(self, form):
+        # check if poll result has been recorded for party under this unit
+        polling_unit = get_object_or_404(PollingUnit, uniqueid=self.kwargs['uniqueid'])
+        results_exist = AnnouncedPUResults.objects.filter(Q(polling_unit=polling_unit.uniqueid) & Q(party_abbreviation=form.cleaned_data['party_abbreviation']))
+        if results_exist:
+            messages.warning(
+                self.request, 
+                f"""
+                Polling result for {form.cleaned_data['party_abbreviation']} 
+                have already been recorded under this polling unit {polling_unit.uniqueid}, 
+                please record for another party or move to an entire new new polling unit
+                """
+            )
+            return self.form_invalid(form)
+        # record polling result if party is new
+        announced_pu_results =  AnnouncedPUResults.objects.create(
+            **form.cleaned_data,
+            polling_unit=int(self.kwargs['uniqueid']),
+            user_ip_address="127.0.0.1"
+        )
+        self.success_url = reverse("polls:unit-results", kwargs={"uniqueid": self.kwargs['uniqueid']})
+        return super().form_valid(form)
