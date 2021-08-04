@@ -1,0 +1,10 @@
+{% extends 'base.html' %} 
+
+{% block body %}
+    <h2>Record results for all parties for a new polling unit</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

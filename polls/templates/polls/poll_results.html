@@ -1,27 +1,43 @@
 {% extends 'base.html' %} {% block body %}
-<div>uniqueid:{{object.uniqueid}}</div>
-<div>polling_unit_id:{{object.polling_unit_id}}</div>
-<div>ward_id:{{object.ward}}</div>
 
-<h1>Results</h1>
+<div class="row mt-5">
+  <div class="col-12 mx-auto">
+    <h4>Results for polling unit: {{object.uniqueid}}</h4>
+    <h5 class="text-muted">Polling unit ID: {{object.polling_unit_id}}</h5>
+    <h5 class="text-muted">Ward: {{object.ward}}</h5>
+    <h5 class="text-muted">LGA: {{object.lga}}</h5>
+  </div>
+</div>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>S/No</th>
-      <th>Party</th>
-      <th>Score</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for record in polling_unit_results %}
-    <tr>
-      <td scope="row"></td>
-      <td>{{record.party_abbreviation}}</td>
-      <td>{{record.party_score}}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="row">
+  <div class="col-12 mt-5 mb-5">
+    <table class="table table-bordered border-primary">
+      <thead>
+        <tr>
+          <th>S/No</th>
+          <th>Party</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for record in polling_unit_results %}
+        <tr>
+          <td scope="row">{{forloop.counter}}</td>
+          <td>{{record.party_abbreviation}}</td>
+          <td>{{record.party_score}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-6 mb-5">
+    <p><small>View summed total result of all the polling units under any particular local government</small></p>
+    <a href="{% url 'polls:lga-results' lga.lga_id %}" class="btn btn-md btn-outline-primary">View</a>
+  </div>
+  <div class="col-6 mb-5">
+    <p><small>Add results for all parties in a new polling unit</small></p>
+    <a href="{% url 'polls:record-poll' object.uniqueid %}" class="btn btn-md btn-outline-primary">Add</a>
+  </div>
+</div>
 
 {% endblock %}

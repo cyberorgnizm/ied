@@ -1,0 +1,47 @@
+{% extends 'base.html' %} 
+
+{% block body %}
+<div class="row mt-5">
+  <div class="col-12 mx-auto">
+    <h4>Results for LGA: {{object.uniqueid}}</h4>
+    <h5 class="text-muted">LGA ID: {{object.lga_id}}</h5>
+    <h5 class="text-muted">LGA Name: {{object.lga_name}}</h5>
+    <h5 class="text-muted">LGA: {{object.lga}}</h5>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12 mt-5 mb-5">
+    <table class="table table-bordered border-primary">
+      <thead>
+        <tr>
+          <th>S/No</th>
+          <th>Party</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for party, scores in results.items %}
+        <tr>
+          <td scope="row">{{forloop.counter}}</td>
+          <td>{{party}}</td>
+          <td>{{scores}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-6 mb-5 h-100">
+    <p>View poll result of individual polling unit under</p>
+    <a href="{% url 'polls:unit-results' unit.uniqueid %}" class="btn btn-md btn-outline-primary">View</a>
+  </div>
+  <div class="col-6 mb-5 h-100">
+    <form method="POST">
+      {% csrf_token %}
+      {{form.as_p}}
+      <button type="submit" class="btn btn-md btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
