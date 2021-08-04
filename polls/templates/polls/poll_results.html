@@ -1,0 +1,27 @@
+{% extends 'base.html' %} {% block body %}
+<div>uniqueid:{{object.uniqueid}}</div>
+<div>polling_unit_id:{{object.polling_unit_id}}</div>
+<div>ward_id:{{object.ward}}</div>
+
+<h1>Results</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>S/No</th>
+      <th>Party</th>
+      <th>Score</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for record in polling_unit_results %}
+    <tr>
+      <td scope="row"></td>
+      <td>{{record.party_abbreviation}}</td>
+      <td>{{record.party_score}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
