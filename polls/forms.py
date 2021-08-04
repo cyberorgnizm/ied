@@ -1,5 +1,5 @@
 from django import forms
-from .models import AnnouncedPUResults, Party, AgentName
+from .models import Party
 
 
 class PollForm(forms.Form):
@@ -9,4 +9,3 @@ class PollForm(forms.Form):
     date_entered = forms.DateTimeField(label="Date Entered", widget=forms.DateTimeInput(
         attrs={"type": "date"}   
     ))
-    
